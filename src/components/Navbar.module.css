@@ -8,7 +8,7 @@
   height: var(--header-height); display: flex; align-items: center; justify-content: space-between; gap: var(--space-6);
 }
 .logo { display: flex; align-items: center; flex-shrink: 0; z-index: 10; }
-.logoImg { height: 28px; width: auto; filter: var(--logo-filter); transition: filter var(--duration-slow); }
+.logoImg { height: 36px; width: auto; filter: var(--logo-filter); transition: filter var(--duration-slow); }
 .nav { display: flex; align-items: center; gap: 2px; }
 .navLink {
   padding: 6px 10px; border-radius: var(--radius-md); font-size: var(--text-sm); font-weight: 500;

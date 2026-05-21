@@ -21,6 +21,7 @@ export default function Navbar() {
     { href: '/tutor', label: n.tutor[lang] },
     { href: '/practice', label: n.practice[lang] },
     { href: '/progress', label: n.progress[lang] },
+    { href: '/course-path', label: n.coursePath[lang] },
     { href: '/teacher', label: n.teacher[lang] },
     { href: '/parent', label: n.parent[lang] },
   ];
@@ -29,7 +30,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.inner}>
         <Link href="/" className={styles.logo}>
-          <Image src="/assets/Persona Lab.png" alt="persona lab" width={160} height={32} className={styles.logoImg} priority />
+          <Image src="/assets/Persona Lab.png" alt="persona lab" width={200} height={40} className={styles.logoImg} priority />
         </Link>
 
         <div className={`${styles.nav} ${mobileOpen ? styles.navOpen : ''}`}>

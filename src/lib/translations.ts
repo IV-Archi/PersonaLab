@@ -7,6 +7,7 @@ const t = {
     tutor: { en: 'AI Tutor', ru: 'AI Репетитор', kz: 'AI Тьютор' },
     practice: { en: 'Practice', ru: 'Практика', kz: 'Жаттығу' },
     progress: { en: 'Progress', ru: 'Прогресс', kz: 'Прогресс' },
+    coursePath: { en: 'Course Path', ru: 'Учебный путь', kz: 'Оқу жолы' },
     teacher: { en: 'Teacher', ru: 'Учитель', kz: 'Мұғалім' },
     parent: { en: 'Parent', ru: 'Родитель', kz: 'Ата-ана' },
     getStarted: { en: 'Get Started', ru: 'Начать', kz: 'Бастау' },
@@ -244,6 +245,18 @@ const t = {
       ru: 'Уведомление об ИИ: Persona Lab настроен на блокировку списывания. Тьютор ведет по шагам.',
       kz: 'ЖИ туралы ескерту: Persona Lab көшіруді блоктайды. Тьютор қадаммен бағыттайды.',
     },
+  },
+  coursePath: {
+    title: { en: 'Course Path Advisor', ru: 'Выбор учебного пути', kz: 'Оқу жолын таңдау' },
+    subtitle: { en: 'Build your personalized learning path', ru: 'Постройте свой индивидуальный учебный путь', kz: 'Өзіңіздің жеке оқу жолыңызды құрыңыз' },
+    coreSubjects: { en: 'Core Subjects', ru: 'Основные предметы', kz: 'Негізгі пәндер' },
+    electives: { en: 'Recommended Electives', ru: 'Рекомендуемые курсы по выбору', kz: 'Ұсынылатын таңдау пәндері' },
+    difficulty: { en: 'Difficulty:', ru: 'Сложность:', kz: 'Қиындығы:' },
+    whyUseful: { en: 'Why this is useful:', ru: 'Почему это полезно:', kz: 'Неліктен пайдалы:' },
+    aiAdvice: { en: 'AI Advice', ru: 'Совет ИИ', kz: 'ЖИ кеңесі' },
+    weakTopicWarning: { en: 'Warning: Contains weak topics', ru: 'Внимание: Содержит слабые темы', kz: 'Ескерту: Әлсіз тақырыптар бар' },
+    studySupport: { en: 'Get Study Support', ru: 'Получить поддержку', kz: 'Оқу қолдауын алу' },
+    careerGoal: { en: 'Career Goal:', ru: 'Карьерная цель:', kz: 'Мансаптық мақсат:' },
   },
 } as const;
 
