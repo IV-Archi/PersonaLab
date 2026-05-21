@@ -228,3 +228,54 @@
   .grid { grid-template-columns: 1fr; }
   .header { flex-direction: column; align-items: flex-start; }
 }
+
+.trustRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.mascotBanner {
+  margin-bottom: var(--space-6);
+}
+
+.mascotBubble {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+
+.mascotEmoji {
+  font-size: 1.75rem;
+  width: 50px;
+  height: 50px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.mascotText {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 500;
+  line-height: var(--leading-normal);
+}
+

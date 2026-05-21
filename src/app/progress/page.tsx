@@ -1,54 +1,143 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { mockStudentData } from '@/lib/ai-service';
+import { useApp } from '@/components/ThemeProvider';
+import tr from '@/lib/translations';
+import { getLocalStats, type UserStats } from '@/lib/user-store';
 import Link from 'next/link';
 import styles from './progress.module.css';
 
 export default function ProgressPage() {
-  const d = mockStudentData;
-  const progressPercent = Math.round((d.completedLessons / d.totalLessons) * 100);
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const maxProgress = Math.max(...d.weeklyProgress);
+  const { lang } = useApp();
+  const pr = tr.progress;
+
+  const [stats, setStats] = useState<UserStats | null>(null);
+
+  useEffect(() => {
+    setStats(getLocalStats());
+  }, []);
+
+  if (!stats) {
+    return (
+      <>
+        <Navbar />
+        <main className={styles.page}>
+          <div className={styles.container}>
+            <p>Loading stats...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  const progressPercent = Math.round((stats.completedLessons / stats.totalLessons) * 100);
+  const days = lang === 'kz' ? ['Дүй', 'Сей', 'Сәр', 'Бей', 'Жұм', 'Сен', 'Жек'] :
+               lang === 'ru' ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] :
+               ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+               
+  const weeklyProgressData = [65, 72, stats.xp > 100 ? 85 : 58, stats.xp > 200 ? 90 : 80, 75, stats.xp > 50 ? 80 : 0, stats.xp > 150 ? 70 : 0];
+  const maxProgress = Math.max(...weeklyProgressData, 1);
+
+  const localizedSubjects: Record<string, Record<string, string>> = {
+    Math: { en: 'Math', ru: 'Математика', kz: 'Математика' },
+    English: { en: 'English', ru: 'Английский', kz: 'Ағылшын тілі' },
+    Science: { en: 'Science', ru: 'Наука', kz: 'Жаратылыстану' },
+    History: { en: 'History', ru: 'История', kz: 'Тарих' },
+    Geography: { en: 'Geography', ru: 'География', kz: 'География' },
+    Economics: { en: 'Economics', ru: 'Экономика', kz: 'Экономика' }
+  };
+
+  const localizedTopics: Record<string, Record<string, string>> = {
+    'Fractions & Ratios': { en: 'Fractions & Ratios', ru: 'Дроби и отношения', kz: 'Бөлшектер мен қатынастар' },
+    'Demand & Supply curves': { en: 'Demand & Supply curves', ru: 'Кривые спроса и предложения', kz: 'Сұраныс пен ұсыныс қисықтары' },
+    'Climate Zones': { en: 'Climate Zones', ru: 'Климатические зоны', kz: 'Климаттық зоналар' },
+    'World War II': { en: 'World War II', ru: 'Вторая мировая война', kz: 'Екінші дүниежүзілік соғыс' },
+    'Verb Tenses': { en: 'Verb Tenses', ru: 'Времена глаголов', kz: 'Етістік шақтары' },
+    'Basic Fractions': { en: 'Basic Fractions', ru: 'Простые дроби', kz: 'Жай бөлшектер' },
+    'Global Warming': { en: 'Global Warming', ru: 'Глобальное потепление', kz: 'Жаһандық жылыну' },
+    'Verb Conjugation': { en: 'Verb Conjugation', ru: 'Спряжение глаголов', kz: 'Етістіктің жіктелуі' }
+  };
+
+  // Localized AI recommendations
+  const localizedRec = {
+    en: `Based on your recent practice, you scored low on ${stats.weakTopics[0]?.name || 'Fractions'}. We recommend focusing on this topic in the AI Tutor.`,
+    ru: `На основе ваших тестов, рекомендуем поработать над темой "${localizedTopics[stats.weakTopics[0]?.name || '']?.ru || 'Дроби'}". Воспользуйтесь ИИ Репетитором.`,
+    kz: `Соңғы жаттығулар нәтижесі бойынша, ЖИ Тьютормен "${localizedTopics[stats.weakTopics[0]?.name || '']?.kz || 'Бөлшектер'}" тақырыбын қайталауды ұсынамыз.`
+  };
 
   return (
     <>
       <Navbar />
       <main className={styles.page}>
         <div className={styles.container}>
+          
+          {/* Trust notice */}
+          <div className={styles.trustBanner}>
+            <span className={styles.trustIcon}>🛡️</span>
+            <p className={styles.trustText}>
+              <strong>{tr.trust.guided[lang]}</strong> — {tr.trust.academicHonesty[lang]}
+            </p>
+          </div>
+
           <div className={styles.header}>
-            <h1 className={styles.title}>📊 Your Progress</h1>
-            <p className={styles.subtitle}>Track your growth, see your strengths, and find areas to improve.</p>
+            <h1 className={styles.title}>📊 {pr.title[lang]}</h1>
+            <p className={styles.subtitle}>{pr.subtitle[lang]}</p>
           </div>
 
           {/* Overview Stats */}
           <div className={styles.overviewRow}>
-            <div className={`${styles.overviewCard}`}>
+            <div className={styles.overviewCard}>
               <span className={styles.overviewIcon}>📚</span>
               <div className={styles.overviewInfo}>
-                <span className={styles.overviewValue}>{d.completedLessons}</span>
-                <span className={styles.overviewLabel}>Lessons Completed</span>
+                <span className={styles.overviewValue}>{stats.completedLessons}</span>
+                <span className={styles.overviewLabel}>{pr.lessonsCompleted[lang]}</span>
               </div>
             </div>
-            <div className={`${styles.overviewCard}`}>
+            <div className={styles.overviewCard}>
               <span className={styles.overviewIcon}>🔥</span>
               <div className={styles.overviewInfo}>
-                <span className={styles.overviewValue}>{d.streak} Days</span>
-                <span className={styles.overviewLabel}>Study Streak</span>
+                <span className={styles.overviewValue}>{stats.streak}</span>
+                <span className={styles.overviewLabel}>{pr.studyStreak[lang]}</span>
               </div>
             </div>
-            <div className={`${styles.overviewCard}`}>
+            <div className={styles.overviewCard}>
               <span className={styles.overviewIcon}>🎯</span>
               <div className={styles.overviewInfo}>
                 <span className={styles.overviewValue}>{progressPercent}%</span>
-                <span className={styles.overviewLabel}>Overall Progress</span>
+                <span className={styles.overviewLabel}>{pr.overallProgress[lang]}</span>
               </div>
             </div>
-            <div className={`${styles.overviewCard}`}>
+            <div className={styles.overviewCard}>
               <span className={styles.overviewIcon}>⭐</span>
               <div className={styles.overviewInfo}>
-                <span className={styles.overviewValue}>{d.level}</span>
-                <span className={styles.overviewLabel}>Current Level</span>
+                <span className={styles.overviewValue}>{stats.level}</span>
+                <span className={styles.overviewLabel}>{pr.currentLevel[lang]}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Motivation Stats & Badges */}
+          <div className={styles.motivationSection} style={{ marginBottom: 'var(--space-6)' }}>
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>💎 {pr.motivationTitle[lang]}</h2>
+              <div className={styles.motivationGrid}>
+                <div>
+                  <span className={styles.motivationLabel}>{pr.xpGained[lang]}</span>
+                  <div className={styles.xpBox}>✨ {stats.xp} XP</div>
+                </div>
+                <div>
+                  <span className={styles.motivationLabel}>{pr.badgesEarned[lang]}</span>
+                  <div className={styles.badgeList}>
+                    {stats.badges.map(b => (
+                      <span key={b} className={styles.badgeItem}>
+                        {b === 'streak3' ? pr.badgesList.streak3[lang] :
+                         b === 'mathMaster' ? pr.badgesList.mathMaster[lang] :
+                         pr.badgesList.honestLearner[lang]}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -56,13 +145,13 @@ export default function ProgressPage() {
           <div className={styles.grid}>
             {/* Weekly Chart */}
             <div className={`${styles.card} ${styles.chartCard}`}>
-              <h2 className={styles.cardTitle}>📈 Weekly Progress</h2>
+              <h2 className={styles.cardTitle}>📈 {pr.weekly[lang]}</h2>
               <div className={styles.chart}>
-                {d.weeklyProgress.map((val, i) => (
+                {weeklyProgressData.map((val, i) => (
                   <div key={i} className={styles.chartCol}>
                     <div className={styles.chartBarWrap}>
                       <div className={styles.chartBar} style={{ height: `${(val / maxProgress) * 100}%` }}>
-                        <span className={styles.chartBarValue}>{val}%</span>
+                        {val > 0 && <span className={styles.chartBarValue}>{val}%</span>}
                       </div>
                     </div>
                     <span className={styles.chartLabel}>{days[i]}</span>
@@ -72,14 +161,14 @@ export default function ProgressPage() {
             </div>
 
             {/* Subject Progress */}
-            <div className={`${styles.card}`}>
-              <h2 className={styles.cardTitle}>📚 Subject Progress</h2>
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>📚 {pr.subjectProgress[lang]}</h2>
               <div className={styles.subjectList}>
-                {Object.entries(d.subjectProgress).map(([subject, progress]) => (
+                {Object.entries(stats.subjectProgress).map(([subject, progress]) => (
                   <div key={subject} className={styles.subjectItem}>
                     <div className={styles.subjectHeader}>
                       <span className={styles.subjectName}>
-                        {subject === 'Math' ? '🔢' : subject === 'English' ? '📖' : subject === 'Science' ? '🔬' : '🏛️'} {subject}
+                        {subject === 'Math' ? '🔢' : subject === 'English' ? '📖' : subject === 'Science' ? '🔬' : subject === 'History' ? '🏛️' : subject === 'Geography' ? '🌍' : '📈'} {localizedSubjects[subject]?.[lang] || subject}
                       </span>
                       <span className={`badge ${progress >= 80 ? 'badge-success' : progress >= 60 ? 'badge-warning' : 'badge-error'}`}>
                         {progress}%
@@ -94,13 +183,13 @@ export default function ProgressPage() {
             </div>
 
             {/* Recent Quizzes */}
-            <div className={`${styles.card}`}>
-              <h2 className={styles.cardTitle}>📝 Quiz History</h2>
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>📝 {pr.quizHistory[lang]}</h2>
               <div className={styles.quizHistory}>
-                {d.recentQuizzes.map((quiz, i) => (
+                {stats.recentQuizzes.map((quiz, i) => (
                   <div key={i} className={styles.quizRow}>
                     <div className={styles.quizInfo}>
-                      <span className={styles.quizTopic}>{quiz.topic}</span>
+                      <span className={styles.quizTopic}>{localizedTopics[quiz.topic]?.[lang] || quiz.topic}</span>
                       <span className={styles.quizDate}>{quiz.date}</span>
                     </div>
                     <div className={styles.quizScoreBar}>
@@ -115,19 +204,19 @@ export default function ProgressPage() {
             </div>
 
             {/* Weak Topics */}
-            <div className={`${styles.card}`}>
+            <div className={styles.card}>
               <div className={styles.cardHeaderRow}>
-                <h2 className={styles.cardTitle}>⚠️ Needs Improvement</h2>
-                <Link href="/practice" className="btn btn-ghost btn-sm">Practice →</Link>
+                <h2 className={styles.cardTitle}>⚠️ {pr.needsImprovement[lang]}</h2>
+                <Link href="/practice" className="btn btn-ghost btn-sm">{tr.nav.practice[lang]} →</Link>
               </div>
               <div className={styles.topicsList}>
-                {d.weakTopics.map((topic, i) => (
+                {stats.weakTopics.map((topic, i) => (
                   <div key={i} className={styles.topicRow}>
                     <div className={styles.topicInfo}>
                       <span className={styles.topicDot} style={{ background: topic.score < 50 ? 'var(--error)' : 'var(--warning)' }} />
                       <div>
-                        <span className={styles.topicName}>{topic.name}</span>
-                        <span className={styles.topicSubject}>{topic.subject}</span>
+                        <span className={styles.topicName}>{localizedTopics[topic.name]?.[lang] || topic.name}</span>
+                        <span className={styles.topicSubject}>{localizedSubjects[topic.subject]?.[lang] || topic.subject}</span>
                       </div>
                     </div>
                     <span className={`badge ${topic.score < 50 ? 'badge-error' : 'badge-warning'}`}>{topic.score}%</span>
@@ -137,16 +226,16 @@ export default function ProgressPage() {
             </div>
 
             {/* Strong Topics */}
-            <div className={`${styles.card}`}>
-              <h2 className={styles.cardTitle}>💪 Strong Areas</h2>
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>💪 {pr.strongAreas[lang]}</h2>
               <div className={styles.topicsList}>
-                {d.strongTopics.map((topic, i) => (
+                {stats.strongTopics.map((topic, i) => (
                   <div key={i} className={styles.topicRow}>
                     <div className={styles.topicInfo}>
                       <span className={styles.topicDot} style={{ background: 'var(--success)' }} />
                       <div>
-                        <span className={styles.topicName}>{topic.name}</span>
-                        <span className={styles.topicSubject}>{topic.subject}</span>
+                        <span className={styles.topicName}>{localizedTopics[topic.name]?.[lang] || topic.name}</span>
+                        <span className={styles.topicSubject}>{localizedSubjects[topic.subject]?.[lang] || topic.subject}</span>
                       </div>
                     </div>
                     <span className="badge badge-success">{topic.score}%</span>
@@ -159,16 +248,14 @@ export default function ProgressPage() {
             <div className={`${styles.card} ${styles.aiRecommend}`}>
               <div className={styles.aiHeader}>
                 <span className={styles.aiEmoji}>🤖</span>
-                <h2 className={styles.cardTitle}>AI Recommendation</h2>
+                <h2 className={styles.cardTitle}>{pr.aiRecommendation[lang]}</h2>
               </div>
               <p className={styles.aiText}>
-                Based on your quiz results, I recommend focusing on <strong>Fractions</strong> this week.
-                Your score is 45%, which means the fundamentals need more practice. Start with the AI Tutor
-                for a guided review, then try the practice exercises.
+                {localizedRec[lang] || localizedRec.en}
               </p>
               <div className={styles.aiActions}>
-                <Link href="/tutor" className="btn btn-primary btn-sm">💬 Review with AI</Link>
-                <Link href="/practice" className="btn btn-secondary btn-sm">📝 Practice</Link>
+                <Link href="/tutor" className="btn btn-primary btn-sm">💬 {tr.nav.tutor[lang]}</Link>
+                <Link href="/practice" className="btn btn-secondary btn-sm">📝 {tr.nav.practice[lang]}</Link>
               </div>
             </div>
           </div>

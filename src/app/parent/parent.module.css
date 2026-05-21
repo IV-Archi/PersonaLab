@@ -177,3 +177,25 @@
 @media (max-width: 480px) {
   .quickStats { grid-template-columns: 1fr; }
 }
+
+.integrityBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.integrityIcon {
+  font-size: 1.2rem;
+}
+
+.integrityText {
+  margin: 0;
+}
+

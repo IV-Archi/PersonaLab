@@ -13,15 +13,33 @@ const t = {
   },
   hero: {
     label: { en: 'AI-powered learning platform', ru: 'Обучение с помощью ИИ', kz: 'ЖИ негізіндегі оқу платформасы' },
-    title1: { en: 'Learn at your pace.', ru: 'Учись в своём темпе.', kz: 'Өз қарқыныңмен оқы.' },
-    title2: { en: 'Understand everything.', ru: 'Понимай всё.', kz: 'Барлығын түсін.' },
+    title1: { en: 'AI that helps students learn,', ru: 'ИИ, который помогает учиться,', kz: 'Көшіру үшін емес,' },
+    title2: { en: 'not copy.', ru: 'а не списывать.', kz: 'білім алу үшін ЖИ.' },
     desc: {
-      en: 'persona lab adapts to your level, explains topics step by step, creates practice tasks, and tracks your progress — in English, Russian, or Kazakh.',
-      ru: 'persona lab подстраивается под ваш уровень, объясняет темы шаг за шагом, создаёт задания и отслеживает прогресс — на русском, английском или казахском.',
-      kz: 'persona lab сіздің деңгейіңізге бейімделеді, тақырыптарды қадам-қадаммен түсіндіреді, тапсырмалар жасайды — қазақша, орысша немесе ағылшынша.',
+      en: 'Persona Lab guides students step-by-step, tracks weak topics, creates practice, and helps them build real understanding.',
+      ru: 'Persona Lab ведет учеников шаг за шагом, отслеживает слабые темы, создает практические задания и помогает по-настоящему понять предмет.',
+      kz: 'Persona Lab оқушыларды қадам-қадаммен бағыттайды, әлсіз тақырыптарды бақылайды, жаттығулар жасайды және пәнді шынайы түсінуге көмектеседі.',
     },
     cta1: { en: 'Start Learning', ru: 'Начать обучение', kz: 'Оқуды бастау' },
     cta2: { en: 'Try AI Tutor', ru: 'Попробовать ИИ', kz: 'AI тьюторды көру' },
+  },
+  trust: {
+    accurate: { en: 'Accurate Explanations', ru: 'Точные объяснения', kz: 'Нақты түсіндірмелер' },
+    guided: { en: 'Guided learning, not copying', ru: 'Обучение, а не списывание', kz: 'Көшіру емес, үйрену' },
+    privacy: { en: 'Student Privacy Shield', ru: 'Защита конфиденциальности', kz: 'Құпиялылықты қорғау' },
+    ethics: { en: 'Ethical AI Support', ru: 'Этичная помощь ИИ', kz: 'ЖИ-дің әдепті көмегі' },
+    verifyLabel: { en: 'Verification Needed', ru: 'Требуется проверка', kz: 'Тексеру қажет' },
+    warningText: {
+      en: 'AI is an educational helper, not a final authority. Always verify important facts.',
+      ru: 'ИИ — это помощник в учебе, а не конечный авторитет. Всегда проверяйте важные факты.',
+      kz: 'ЖИ — бұл оқуға көмекші, түпкілікті беделді орган емес. Маңызды фактілерді әрқашан тексеріңіз.',
+    },
+    reflectionTitle: { en: 'Reflect on this', ru: 'Подумайте над этим', kz: 'Осы туралы ойланыңыз' },
+    academicHonesty: {
+      en: 'Academic Honesty: Use this resource to clarify, practice, and learn. Write your assignments yourself.',
+      ru: 'Академическая честность: используйте ресурс для объяснений и практики. Выполняйте работы сами.',
+      kz: 'Академиялық адалдық: ресурсты түсіндіру мен жаттығу үшін пайдаланыңыз. Жұмысты өзіңіз орындаңыз.',
+    },
   },
   metrics: {
     langs: { en: 'Languages supported', ru: 'Языков поддержки', kz: 'Қолдау тілдері' },
@@ -42,7 +60,7 @@ const t = {
   solution: {
     label: { en: 'The Solution', ru: 'Решение', kz: 'Шешім' },
     title: { en: 'AI that teaches, not just answers', ru: 'ИИ, который учит, а не просто отвечает', kz: 'Жай жауап бермейтін, үйрететін ЖИ' },
-    desc: { en: 'persona lab turns AI into a structured learning assistant that guides students step by step.', ru: 'persona lab превращает ИИ в структурированного помощника.', kz: 'persona lab ЖИ-ды құрылымдық оқу көмекшісіне айналдырады.' },
+    desc: { en: 'Persona Lab turns AI into a structured learning assistant that guides students step by step.', ru: 'Persona Lab превращает ИИ в структурированного помощника.', kz: 'Persona Lab ЖИ-ды құрылымдық оқу көмекшісіне айналдырады.' },
     features: [
       { title: { en: 'Step-by-step explanations', ru: 'Пошаговые объяснения', kz: 'Қадам-қадам түсіндірме' }, desc: { en: 'AI breaks down complex topics into simple steps.', ru: 'ИИ разбивает сложные темы на простые шаги.', kz: 'ЖИ күрделі тақырыптарды қарапайым қадамдарға бөледі.' } },
       { title: { en: 'Instant answer checking', ru: 'Мгновенная проверка', kz: 'Лезде тексеру' }, desc: { en: 'Submit answers and get detailed feedback.', ru: 'Отправьте ответ и получите обратную связь.', kz: 'Жауабыңызды жіберіп, кері байланыс алыңыз.' } },
@@ -84,7 +102,7 @@ const t = {
   },
   cta: {
     title: { en: 'Ready to learn smarter?', ru: 'Готовы учиться умнее?', kz: 'Ақылды оқуға дайынсыз ба?' },
-    desc: { en: 'Join persona lab and experience personalized AI-powered education.', ru: 'Присоединяйтесь к persona lab.', kz: 'persona lab-қа қосылыңыз.' },
+    desc: { en: 'Join Persona Lab and experience personalized AI-powered education.', ru: 'Присоединяйтесь к Persona Lab.', kz: 'Persona Lab-қа қосылыңыз.' },
     btn: { en: 'Get Started — Free', ru: 'Начать — Бесплатно', kz: 'Бастау — Тегін' },
   },
   footer: {
@@ -107,8 +125,16 @@ const t = {
     quizzes: { en: 'Recent Quizzes', ru: 'Последние тесты', kz: 'Соңғы тесттер' },
     aiRec: { en: 'AI Recommendation', ru: 'Рекомендация ИИ', kz: 'ЖИ ұсынысы' },
     continueStudying: { en: 'Continue Studying', ru: 'Продолжить', kz: 'Жалғастыру' },
-    xp: { en: 'XP', ru: 'Опыт', kz: 'Тәжірибе' },
+    xp: { en: 'XP Points', ru: 'Очки опыта', kz: 'Тәжірибе ұпайлары' },
     complete: { en: 'Complete', ru: 'Выполнено', kz: 'Орындалды' },
+    badges: { en: 'Badges Earned', ru: 'Полученные значки', kz: 'Алынған белгілер' },
+    dailyGoalText: { en: 'Daily Goal', ru: 'Дневная цель', kz: 'Күнделікті мақсат' },
+    weakTopicChallenge: { en: 'Weak Topic Challenge', ru: 'Челлендж слабой темы', kz: 'Әлсіз тақырып сайысы' },
+    mascotTip: {
+      en: 'Tip from Labby: Review your weak topics first before taking a new quiz!',
+      ru: 'Совет от Labby: Повторите слабые темы перед прохождением нового теста!',
+      kz: 'Labby-ден кеңес: Жаңа тест тапсырмас бұрын әлсіз тақырыптарыңызды қайталаңыз!',
+    },
   },
   practice: {
     title: { en: 'Practice', ru: 'Практика', kz: 'Жаттығу' },
@@ -126,12 +152,43 @@ const t = {
     tryAgain: { en: 'Try Again', ru: 'Попробовать снова', kz: 'Қайта көру' },
     results: { en: 'Results', ru: 'Результаты', kz: 'Нәтижелер' },
     question: { en: 'Question', ru: 'Вопрос', kz: 'Сұрақ' },
+    check: { en: 'Check Answer', ru: 'Проверить ответ', kz: 'Жауапты тексеру' },
+    hint: { en: 'Get a Hint', ru: 'Получить подсказку', kz: 'Нұсқау алу' },
+    disclosure: {
+      en: 'I practiced this topic honestly with guidance from Persona Lab.',
+      ru: 'Я честно практиковал эту тему под руководством Persona Lab.',
+      kz: 'Мен бұл тақырыпты Persona Lab басшылығымен адал түрде жаттықтырдым.',
+    },
   },
   tutor: {
     title: { en: 'AI Tutor', ru: 'ИИ Репетитор', kz: 'ЖИ Тьютор' },
     placeholder: { en: 'Ask me anything...', ru: 'Спросите что угодно...', kz: 'Кез келген нәрсені сұраңыз...' },
     send: { en: 'Send', ru: 'Отправить', kz: 'Жіберу' },
     quickActions: { en: 'Quick Actions', ru: 'Быстрые действия', kz: 'Жылдам әрекеттер' },
+    guidedMode: { en: 'Guided Study Mode (No copy-paste)', ru: 'Режим наставника (Без копирования)', kz: 'Тьютор режимі (Көшірусіз)' },
+    showSteps: { en: 'Explain steps details', ru: 'Объяснить шаги подробно', kz: 'Қадамдарды егжей-тегжейлі түсіндіру' },
+    disclosureBtn: { en: 'Generate AI-Use Disclosure', ru: 'Создать отчет об ИИ', kz: 'ЖИ-ді пайдалану есебін жасау' },
+    disclosureTitle: { en: 'AI Use Disclosure Statement', ru: 'Отчет об использовании ИИ', kz: 'ЖИ-ді пайдалану туралы мәлімдеме' },
+    disclosureDesc: {
+      en: 'Select how you used Persona Lab to generate a statement for your teacher:',
+      ru: 'Выберите, как вы использовали Persona Lab, чтобы создать отчет для учителя:',
+      kz: 'Мұғаліміңізге мәлімдеме жасау үшін Persona Lab-ты қалай пайдаланғаныңызды таңдаңыз:',
+    },
+    useCases: {
+      concepts: { en: 'I used AI to understand difficult concepts.', ru: 'Я использовал ИИ для понимания сложных тем.', kz: 'Мен ЖИ-ді күрделі тақырыптарды түсіну үшін пайдаландым.' },
+      practice: { en: 'I generated practice questions and checked my answers.', ru: 'Я создал тренировочные вопросы и проверил свои ответы.', kz: 'Мен жаттығу сұрақтарын жасап, жауаптарымды тексердім.' },
+      feedback: { en: 'I asked for grammar and structural feedback on my draft.', ru: 'Я попросил дать отзыв о грамматике и структуре черновика.', kz: 'Мен жобамның грамматикасы мен құрылымы туралы кері байланыс сұрадым.' },
+      outline: { en: 'I generated outlines, but wrote the final work myself.', ru: 'Я составил план работы, но сам написал финальный текст.', kz: 'Мен жұмыс жоспарын құрдым, бірақ соңғы мәтінді өзім жаздым.' },
+    },
+    generatedText: { en: 'Generated Statement', ru: 'Сгенерированное заявление', kz: 'Жасалған мәлімдеме' },
+    copyBtn: { en: 'Copy to Clipboard', ru: 'Копировать', kz: 'Көшіру' },
+    copied: { en: 'Copied!', ru: 'Скопировано!', kz: 'Көшірілді!' },
+    warningTitle: { en: 'Tutor Guidelines', ru: 'Правила репетитора', kz: 'Тьютор ережелері' },
+    warningText: {
+      en: 'Labby is an helper. I will guide you with hints and examples but will not write assignments for you.',
+      ru: 'Labby — ваш помощник. Я помогу подсказками и примерами, но не буду писать работу за вас.',
+      kz: 'Labby — сіздің көмекшіңіз. Мен нұсқаулар мен мысалдар арқылы көмектесемін, бірақ жұмысты сіз үшін жазбаймын.',
+    },
   },
   progress: {
     title: { en: 'Your Progress', ru: 'Ваш прогресс', kz: 'Сіздің прогресіңіз' },
@@ -146,6 +203,14 @@ const t = {
     needsImprovement: { en: 'Needs Improvement', ru: 'Требует улучшения', kz: 'Жақсарту қажет' },
     strongAreas: { en: 'Strong Areas', ru: 'Сильные стороны', kz: 'Күшті жақтар' },
     aiRecommendation: { en: 'AI Recommendation', ru: 'Рекомендация ИИ', kz: 'ЖИ ұсынысы' },
+    motivationTitle: { en: 'Your Motivation Stats', ru: 'Ваша мотивация', kz: 'Сіздің мотивацияңыз' },
+    xpGained: { en: 'Total XP Gained', ru: 'Всего набрано опыта', kz: 'Барлық жиналған тәжірибе' },
+    badgesEarned: { en: 'Badges Earned', ru: 'Получено значков', kz: 'Белгілер алынды' },
+    badgesList: {
+      streak3: { en: '🔥 3-Day Streak', ru: '🔥 3 дня подряд', kz: '🔥 3 күн қатарынан' },
+      mathMaster: { en: '🔢 Math Master', ru: '🔢 Мастер математики', kz: '🔢 Математика шебері' },
+      honestLearner: { en: '🛡️ Honest Learner', ru: '🛡️ Честный ученик', kz: '🛡️ Адал оқушы' },
+    },
   },
   teacher: {
     title: { en: 'Teacher Dashboard', ru: 'Панель учителя', kz: 'Мұғалім панелі' },
@@ -157,6 +222,12 @@ const t = {
     weakTopics: { en: 'Class Weak Topics', ru: 'Слабые темы класса', kz: 'Сынып әлсіз тақырыптары' },
     aiSuggestions: { en: 'AI Teaching Suggestions', ru: 'ИИ рекомендации', kz: 'ЖИ ұсыныстары' },
     students: { en: 'Students', ru: 'Ученики', kz: 'Оқушылар' },
+    studentName: { en: 'Student', ru: 'Ученик', kz: 'Оқушы' },
+    level: { en: 'Level', ru: 'Уровень', kz: 'Деңгей' },
+    progress: { en: 'Progress', ru: 'Прогресс', kz: 'Прогресс' },
+    weakTopic: { en: 'Weak Topic', ru: 'Слабая тема', kz: 'Әлсіз тақырып' },
+    lastActive: { en: 'Last Active', ru: 'Активность', kz: 'Белсенділік' },
+    honestUseRate: { en: 'AI Honesty Rating', ru: 'Рейтинг честности ИИ', kz: 'ЖИ адалдық рейтингі' },
   },
   parent: {
     title: { en: 'Parent View', ru: 'Для родителей', kz: 'Ата-ана көрінісі' },
@@ -168,6 +239,11 @@ const t = {
     subjectOverview: { en: 'Subject Overview', ru: 'Предметы', kz: 'Пәндер шолуы' },
     recentActivity: { en: 'Recent Activity', ru: 'Последние действия', kz: 'Соңғы әрекеттер' },
     recommendations: { en: 'Recommendations', ru: 'Рекомендации', kz: 'Ұсыныстар' },
+    parentNote: {
+      en: 'AI Assistant Notice: Persona Lab is configured to block cheating. The tutor guides step-by-step.',
+      ru: 'Уведомление об ИИ: Persona Lab настроен на блокировку списывания. Тьютор ведет по шагам.',
+      kz: 'ЖИ туралы ескерту: Persona Lab көшіруді блоктайды. Тьютор қадаммен бағыттайды.',
+    },
   },
 } as const;
 

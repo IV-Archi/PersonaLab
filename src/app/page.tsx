@@ -101,9 +101,36 @@ export default function HomePage() {
             <div className={styles.center}><div className="section-label">{tr.roles.label[lang]}</div><h2 className="section-title">{tr.roles.title[lang]}</h2></div>
             <div className={styles.roleGrid}>
               {[
-                { r: tr.roles.student, link: '/dashboard', cta: tr.nav.dashboard[lang], features: ['Adaptive AI tutor', 'Step-by-step guidance', 'Practice with feedback', 'Progress tracking', 'Multi-language'] },
-                { r: tr.roles.teacher, link: '/teacher', cta: tr.nav.teacher[lang], features: ['Class overview', 'Student analytics', 'Weak topics report', 'AI task generator', 'Lesson support'] },
-                { r: tr.roles.parent, link: '/parent', cta: tr.nav.parent[lang], features: ['Weekly progress', 'Subject overview', 'Activity tracking', 'Recommendations', 'Study streaks'] },
+                { 
+                  r: tr.roles.student, 
+                  link: '/dashboard', 
+                  cta: tr.nav.dashboard[lang], 
+                  features: lang === 'kz' ? 
+                    ['Бейімделгіш ЖИ-тьютор', 'Қадамдық нұсқаулықтар', 'Кері байланысы бар жаттығулар', 'Прогресті бақылау', 'Көптілділік қолдауы'] :
+                    lang === 'ru' ?
+                    ['Адаптивный ИИ-репетитор', 'Пошаговые подсказки', 'Практика с обратной связью', 'Контроль прогресса', 'Поддержка языков'] :
+                    ['Adaptive AI tutor', 'Step-by-step guidance', 'Practice with feedback', 'Progress tracking', 'Multi-language'] 
+                },
+                { 
+                  r: tr.roles.teacher, 
+                  link: '/teacher', 
+                  cta: tr.nav.teacher[lang], 
+                  features: lang === 'kz' ? 
+                    ['Сыныпқа шолу', 'Оқушылар аналитикасы', 'Әлсіз тақырыптар есебі', 'ЖИ-тапсырмалар генераторы', 'Сабақ қолдауы'] :
+                    lang === 'ru' ?
+                    ['Обзор класса', 'Аналитика учеников', 'Отчет о слабых темах', 'Генератор ИИ-заданий', 'Поддержка уроков'] :
+                    ['Class overview', 'Student analytics', 'Weak topics report', 'AI task generator', 'Lesson support']
+                },
+                { 
+                  r: tr.roles.parent, 
+                  link: '/parent', 
+                  cta: tr.nav.parent[lang], 
+                  features: lang === 'kz' ? 
+                    ['Апталық прогресс', 'Пәндерге шолу', 'Әрекеттерді бақылау', 'Ұсыныстар', 'Оқу сериялары'] :
+                    lang === 'ru' ?
+                    ['Еженедельный прогресс', 'Обзор предметов', 'Отслеживание активности', 'Рекомендации', 'Серии занятий'] :
+                    ['Weekly progress', 'Subject overview', 'Activity tracking', 'Recommendations', 'Study streaks']
+                },
               ].map((role, i) => (
                 <div key={i} className={`card ${styles.roleCard}`}>
                   <h3 className={styles.roleTitle}>{role.r.title[lang]}</h3>

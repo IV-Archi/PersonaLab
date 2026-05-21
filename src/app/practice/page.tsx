@@ -1,140 +1,193 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import { generatePractice, checkAnswer, type PracticeQuestion, type AnswerFeedback } from '@/lib/ai-service';
+import { useApp } from '@/components/ThemeProvider';
+import tr from '@/lib/translations';
+import { generatePractice, checkAnswer as aiCheckAnswer, type PracticeQuestion, type AnswerFeedback } from '@/lib/ai-service';
+import { getLocalStats, addQuizResult, addXP } from '@/lib/user-store';
 import styles from './practice.module.css';
 
 export default function PracticePage() {
+  const { lang } = useApp();
+  const pt = tr.practice;
+
   const [subject, setSubject] = useState('Math');
   const [difficulty, setDifficulty] = useState('Medium');
-  const [language, setLanguage] = useState('English');
   const [questions, setQuestions] = useState<PracticeQuestion[]>([]);
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [typedAnswer, setTypedAnswer] = useState('');
   const [feedback, setFeedback] = useState<AnswerFeedback | null>(null);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(0);
   const [quizComplete, setQuizComplete] = useState(false);
   const [started, setStarted] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+
+  // Sync translation language parameter with practice generation
+  const activeLangLabel = lang === 'kz' ? 'Қазақша' : lang === 'ru' ? 'Русский' : 'English';
 
   const startPractice = () => {
-    const qs = generatePractice(subject, '', difficulty, language);
+    const qs = generatePractice(subject, '', difficulty, activeLangLabel);
     setQuestions(qs);
     setCurrentQ(0);
     setSelectedAnswer(null);
+    setTypedAnswer('');
     setFeedback(null);
     setScore(0);
     setAnswered(0);
     setQuizComplete(false);
     setStarted(true);
+    setShowHint(false);
   };
 
   const submitAnswer = (answer: string) => {
     if (feedback) return;
-    setSelectedAnswer(answer);
     const q = questions[currentQ];
-    const result = checkAnswer(q.question, answer, q.correctAnswer, language);
+    const result = aiCheckAnswer(q.question, answer, q.correctAnswer, lang);
     setFeedback(result);
     setAnswered(prev => prev + 1);
-    if (result.isCorrect) setScore(prev => prev + 1);
+    
+    if (result.isCorrect) {
+      setScore(prev => prev + 1);
+      addXP(20); // Practice base XP
+    } else {
+      addXP(5); // Consolation XP
+    }
+  };
+
+  const handleTextSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!typedAnswer.trim()) return;
+    submitAnswer(typedAnswer.trim());
   };
 
   const nextQuestion = () => {
     if (currentQ < questions.length - 1) {
       setCurrentQ(prev => prev + 1);
       setSelectedAnswer(null);
+      setTypedAnswer('');
       setFeedback(null);
+      setShowHint(false);
     } else {
+      // Save quiz results to user progress store
+      addQuizResult(subject + ' Practice', subject, Math.round((score / questions.length) * 100));
       setQuizComplete(true);
     }
   };
 
   const q = questions[currentQ];
 
+  const subjectEmojis: Record<string, string> = {
+    Math: '🔢',
+    English: '📖',
+    Science: '🔬',
+    History: '🏛️',
+    Geography: '🌍',
+    Economics: '📈'
+  };
+
+  const subjectLabels: Record<string, Record<string, string>> = {
+    Math: { en: 'Math', ru: 'Математика', kz: 'Математика' },
+    English: { en: 'English', ru: 'Английский', kz: 'Ағылшын тілі' },
+    Science: { en: 'Science', ru: 'Наука', kz: 'Жаратылыстану' },
+    History: { en: 'History', ru: 'История', kz: 'Тарих' },
+    Geography: { en: 'Geography', ru: 'География', kz: 'География' },
+    Economics: { en: 'Economics', ru: 'Экономика', kz: 'Экономика' }
+  };
+
   return (
     <>
       <Navbar />
       <main className={styles.page}>
         <div className={styles.container}>
+          
+          {/* Trust Disclaimer */}
+          <div className={styles.trustBanner}>
+            <span className={styles.trustIcon}>🛡️</span>
+            <p className={styles.trustText}>
+              <strong>{tr.trust.guided[lang]}</strong> — {tr.trust.academicHonesty[lang]}
+            </p>
+          </div>
+
           {!started ? (
             /* Setup Screen */
             <div className={styles.setup}>
               <div className={styles.setupHeader}>
-                <h1 className={styles.setupTitle}>📝 Practice Zone</h1>
-                <p className={styles.setupDesc}>Choose your subject and difficulty. AI will generate questions and check your answers with detailed feedback.</p>
+                <h1 className={styles.setupTitle}>📝 {pt.title[lang]}</h1>
+                <p className={styles.setupDesc}>{pt.subtitle[lang]}</p>
               </div>
 
-              <div className={`${styles.setupCard}`}>
+              <div className={styles.setupCard}>
                 <div className={styles.setupField}>
-                  <label className={styles.setupLabel}>📚 Subject</label>
+                  <label className={styles.setupLabel}>{pt.subject[lang]}</label>
                   <div className={styles.optionGrid}>
-                    {['Math', 'English', 'Science', 'History'].map(s => (
-                      <button key={s} className={`${styles.optionCard} ${subject === s ? styles.optionSelected : ''}`}
-                        onClick={() => setSubject(s)}>
-                        <span className={styles.optionEmoji}>
-                          {s === 'Math' ? '🔢' : s === 'English' ? '📖' : s === 'Science' ? '🔬' : '🏛️'}
-                        </span>
-                        <span>{s}</span>
+                    {['Math', 'English', 'Science', 'History', 'Geography', 'Economics'].map(s => (
+                      <button
+                        key={s}
+                        className={`${styles.optionCard} ${subject === s ? styles.optionSelected : ''}`}
+                        onClick={() => setSubject(s)}
+                      >
+                        <span className={styles.optionEmoji}>{subjectEmojis[s] || '📚'}</span>
+                        <span>{subjectLabels[s]?.[lang] || s}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className={styles.setupField}>
-                  <label className={styles.setupLabel}>📊 Difficulty</label>
+                  <label className={styles.setupLabel}>{pt.difficulty[lang]}</label>
                   <div className={styles.optionGrid}>
-                    {['Easy', 'Medium', 'Hard'].map(d => (
-                      <button key={d} className={`${styles.optionCard} ${difficulty === d ? styles.optionSelected : ''}`}
-                        onClick={() => setDifficulty(d)}>
-                        <span className={styles.optionEmoji}>
-                          {d === 'Easy' ? '🟢' : d === 'Medium' ? '🟡' : '🔴'}
-                        </span>
-                        <span>{d}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.setupField}>
-                  <label className={styles.setupLabel}>🌐 Language</label>
-                  <div className={styles.optionGrid}>
-                    {['English', 'Русский', 'Қазақша'].map(l => (
-                      <button key={l} className={`${styles.optionCard} ${language === l ? styles.optionSelected : ''}`}
-                        onClick={() => setLanguage(l)}>
-                        <span>{l}</span>
+                    {[
+                      { key: 'Easy', label: pt.easy[lang], emoji: '🟢' },
+                      { key: 'Medium', label: pt.medium[lang], emoji: '🟡' },
+                      { key: 'Hard', label: pt.hard[lang], emoji: '🔴' }
+                    ].map(d => (
+                      <button
+                        key={d.key}
+                        className={`${styles.optionCard} ${difficulty === d.key ? styles.optionSelected : ''}`}
+                        onClick={() => setDifficulty(d.key)}
+                      >
+                        <span className={styles.optionEmoji}>{d.emoji}</span>
+                        <span>{d.label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <button className="btn btn-primary btn-lg" onClick={startPractice} style={{ width: '100%', marginTop: '16px' }}>
-                  🚀 Generate 5 Questions
+                  ⚡ {pt.generate[lang]}
                 </button>
               </div>
             </div>
           ) : quizComplete ? (
             /* Results Screen */
             <div className={styles.results}>
-              <div className={`${styles.resultsCard}`}>
+              <div className={styles.resultsCard}>
                 <div className={styles.resultsEmoji}>
-                  {score === questions.length ? '🏆' : score >= 3 ? '🎉' : '💪'}
+                  {score === questions.length ? '🏆' : score >= 2 ? '🎉' : '💪'}
                 </div>
                 <h2 className={styles.resultsTitle}>
-                  {score === questions.length ? 'Perfect Score!' : score >= 3 ? 'Great Job!' : 'Keep Practicing!'}
+                  {score === questions.length 
+                    ? (lang === 'kz' ? 'Керемет нәтиже!' : lang === 'ru' ? 'Идеальный результат!' : 'Perfect Score!') 
+                    : score >= 2 
+                      ? (lang === 'kz' ? 'Жақсы жұмыс!' : lang === 'ru' ? 'Отличная работа!' : 'Great Job!') 
+                      : (lang === 'kz' ? 'Жаттығуды жалғастырыңыз!' : lang === 'ru' ? 'Продолжайте практиковаться!' : 'Keep Practicing!')
+                  }
                 </h2>
                 <div className={styles.resultsScore}>
                   <span className={styles.scoreNumber}>{score}</span>
                   <span className={styles.scoreDivider}>/</span>
                   <span className={styles.scoreTotal}>{questions.length}</span>
                 </div>
-                <p className={styles.resultsPercent}>{Math.round((score / questions.length) * 100)}% correct</p>
+                <p className={styles.resultsPercent}>{Math.round((score / questions.length) * 100)}% {lang === 'kz' ? 'дұрыс' : lang === 'ru' ? 'верно' : 'correct'}</p>
 
                 <div className={styles.resultsReview}>
                   {questions.map((question, i) => (
                     <div key={i} className={styles.reviewItem}>
                       <span className={styles.reviewIcon}>
-                        {i < answered && (i < score || Math.random() > 0.5) ? '✅' : '❌'}
+                        {i === 0 && score > 0 ? '✅' : i === 1 && score > 1 ? '✅' : '❌'}
                       </span>
                       <span className={styles.reviewQ}>{question.question}</span>
                     </div>
@@ -142,18 +195,16 @@ export default function PracticePage() {
                 </div>
 
                 <div className={styles.resultsActions}>
-                  <button className="btn btn-primary" onClick={startPractice}>🔄 Try Again</button>
-                  <button className="btn btn-secondary" onClick={() => setStarted(false)}>📚 New Subject</button>
+                  <button className="btn btn-primary" onClick={startPractice}>🔄 {pt.tryAgain[lang]}</button>
+                  <button className="btn btn-secondary" onClick={() => setStarted(false)}>📚 {lang === 'kz' ? 'Басқа пән' : lang === 'ru' ? 'Другой предмет' : 'New Subject'}</button>
                 </div>
 
                 <div className={styles.aiSuggestion}>
                   <span>🤖</span>
                   <p>
-                    {score >= 4
-                      ? "Excellent work! You're ready to try harder questions or move to the next topic."
-                      : score >= 3
-                        ? "Good effort! Review the questions you missed and try similar ones."
-                        : "Don't give up! I recommend reviewing this topic in the AI Tutor before trying again."}
+                    {score >= 2
+                      ? (lang === 'kz' ? "Жарайсың! Сіз келесі тақырыптарға өтуге дайынсыз." : lang === 'ru' ? "Отлично! Вы готовы переходить к следующей теме." : "Excellent! You are ready to advance to the next topic.")
+                      : (lang === 'kz' ? "Берілмеңіз! AI Тьютормен тақырыпты тағы бір рет қарап шығуды ұсынамын." : lang === 'ru' ? "Не сдавайтесь! Рекомендую повторить эту тему с AI Репетитором." : "Don't give up! We recommend reviewing this topic with the AI Tutor.")}
                   </p>
                 </div>
               </div>
@@ -163,35 +214,74 @@ export default function PracticePage() {
             <div className={styles.quiz}>
               <div className={styles.quizHeader}>
                 <div className={styles.quizInfo}>
-                  <span className="badge badge-primary">{subject}</span>
-                  <span className="badge badge-warning">{difficulty}</span>
+                  <span className="badge badge-primary">{subjectLabels[subject]?.[lang] || subject}</span>
+                  <span className="badge badge-warning">
+                    {difficulty === 'Easy' ? pt.easy[lang] : difficulty === 'Medium' ? pt.medium[lang] : pt.hard[lang]}
+                  </span>
                 </div>
                 <div className={styles.quizProgress}>
-                  <span>Question {currentQ + 1} of {questions.length}</span>
+                  <span>{lang === 'kz' ? `Сұрақ ${currentQ + 1} / ${questions.length}` : lang === 'ru' ? `Вопрос ${currentQ + 1} из ${questions.length}` : `Question ${currentQ + 1} of ${questions.length}`}</span>
                   <div className="progress-bar" style={{ width: '200px' }}>
                     <div className="progress-bar-fill" style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} />
                   </div>
                 </div>
-                <div className={styles.quizScore}>Score: {score}/{answered}</div>
+                <div className={styles.quizScore}>{pt.score[lang]}: {score}/{answered}</div>
               </div>
 
-              <div className={`${styles.questionCard}`}>
-                <div className={styles.questionNumber}>Question {currentQ + 1}</div>
+              <div className={styles.questionCard}>
+                <div className={styles.questionNumber}>{pt.question[lang]} {currentQ + 1}</div>
                 <h2 className={styles.questionText}>{q?.question}</h2>
 
-                <div className={styles.optionsGrid}>
-                  {q?.options?.map((option, i) => (
-                    <button
-                      key={i}
-                      className={`${styles.answerOption} ${selectedAnswer === option ? (feedback?.isCorrect ? styles.answerCorrect : styles.answerWrong) : ''} ${feedback && option === q.correctAnswer ? styles.answerCorrect : ''}`}
-                      onClick={() => submitAnswer(option)}
+                {/* Input types handling */}
+                {q?.options && q.options.length > 0 ? (
+                  <div className={styles.optionsGrid}>
+                    {q.options.map((option, i) => (
+                      <button
+                        key={i}
+                        className={`${styles.answerOption} ${selectedAnswer === option ? (feedback?.isCorrect ? styles.answerCorrect : styles.answerWrong) : ''} ${feedback && option === q.correctAnswer ? styles.answerCorrect : ''}`}
+                        onClick={() => {
+                          setSelectedAnswer(option);
+                          submitAnswer(option);
+                        }}
+                        disabled={!!feedback}
+                      >
+                        <span className={styles.optionLetter}>{String.fromCharCode(65 + i)}</span>
+                        <span>{option}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <form onSubmit={handleTextSubmit} className={styles.textInputForm}>
+                    <input
+                      type="text"
+                      className="input-field"
+                      placeholder={lang === 'kz' ? 'Жауабыңызды осында жазыңыз...' : lang === 'ru' ? 'Введите ваш ответ здесь...' : 'Type your answer here...'}
+                      value={typedAnswer}
+                      onChange={e => setTypedAnswer(e.target.value)}
                       disabled={!!feedback}
-                    >
-                      <span className={styles.optionLetter}>{String.fromCharCode(65 + i)}</span>
-                      <span>{option}</span>
+                      style={{ marginBottom: '12px', width: '100%' }}
+                    />
+                    {!feedback && (
+                      <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                        🔍 {pt.check[lang]}
+                      </button>
+                    )}
+                  </form>
+                )}
+
+                {/* Hint Button */}
+                {!feedback && (
+                  <div style={{ marginTop: '12px' }}>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setShowHint(!showHint)}>
+                      💡 {showHint ? (lang === 'kz' ? 'Жасыру' : lang === 'ru' ? 'Скрыть подсказку' : 'Hide Hint') : pt.hint[lang]}
                     </button>
-                  ))}
-                </div>
+                    {showHint && (
+                      <p className={styles.hintText} style={{ marginTop: '8px', fontStyle: 'italic', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                        {lang === 'kz' ? 'Анықтама немесе бірінші қадамды орындап көріңіз.' : lang === 'ru' ? 'Вспомните формулу или сделайте первый шаг.' : 'Think about the core concept or try the first step.'}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {feedback && (
                   <div className={`${styles.feedbackBox} ${feedback.isCorrect ? styles.feedbackCorrect : styles.feedbackWrong}`}>
@@ -199,11 +289,20 @@ export default function PracticePage() {
                       <span>{feedback.isCorrect ? '✅' : '❌'}</span>
                       <strong>{feedback.feedback}</strong>
                     </div>
-                    <p>{feedback.explanation}</p>
+                    <p style={{ marginTop: '8px' }}>{feedback.explanation}</p>
                     {!feedback.isCorrect && <p className={styles.feedbackHint}>💡 {feedback.hint}</p>}
-                    <button className="btn btn-primary btn-sm" onClick={nextQuestion} style={{ marginTop: '12px' }}>
-                      {currentQ < questions.length - 1 ? 'Next Question →' : 'See Results'}
-                    </button>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        🛡️ {pt.disclosure[lang]}
+                      </p>
+                      <button className="btn btn-primary btn-sm" onClick={nextQuestion} style={{ width: 'fit-content' }}>
+                        {currentQ < questions.length - 1 
+                          ? (lang === 'kz' ? 'Келесі сұрақ →' : lang === 'ru' ? 'Следующий вопрос →' : 'Next Question →') 
+                          : (lang === 'kz' ? 'Нәтижелерді көру' : lang === 'ru' ? 'Посмотреть результаты' : 'See Results')
+                        }
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
