@@ -7,8 +7,17 @@ export async function POST(req: Request) {
 
     const apiKey = process.env.OPENAI_API_KEY;
 
-    if (!apiKey) {
-      console.warn("OPENAI_API_KEY environment variable is not defined.");
+    if (!apiKey || apiKey.trim() === '' || apiKey === 'your_openai_api_key_here') {
+      console.error(
+        "\n========================================================================\n" +
+        "❌ DEVELOPER ERROR: OPENAI_API_KEY is missing or invalid in your .env!\n" +
+        "Please follow these steps to configure it:\n" +
+        "1. In the 'persona-lab-app' directory, create a '.env' file if it doesn't exist.\n" +
+        "2. Add your OpenAI API key to the file:\n" +
+        "   OPENAI_API_KEY=sk-proj-...\n" +
+        "3. Restart the Next.js development server.\n" +
+        "========================================================================\n"
+      );
       return NextResponse.json(
         { error: "AI Tutor is temporarily unavailable. Please try again." },
         { status: 503 }
