@@ -78,7 +78,7 @@ export function getLocalStats(): UserStats {
     }
     localStorage.setItem('pl-user-stats', JSON.stringify(DEFAULT_STATS));
     return DEFAULT_STATS;
-  } catch (e) {
+  } catch {
     return DEFAULT_STATS;
   }
 }

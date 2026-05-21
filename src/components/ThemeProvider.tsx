@@ -34,6 +34,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
     const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const t = savedTheme || (preferDark ? 'dark' : 'light');
     const l = savedLang || 'en';
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(t);
     setLangState(l);
     document.documentElement.setAttribute('data-theme', t);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
 import tr, { type Lang } from '@/lib/translations';
@@ -24,6 +24,7 @@ export default function TutorPage() {
   const [difficulty, setDifficulty] = useState('Medium');
   const [guidedMode, setGuidedMode] = useState(true);
   const [explainSteps, setExplainSteps] = useState(true);
+  const [tutorMode, setTutorMode] = useState<'explain' | 'practice' | 'check' | 'hint' | 'steps' | 'factcheck'>('explain');
   const [isTyping, setIsTyping] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   
@@ -35,7 +36,6 @@ export default function TutorPage() {
     feedback: false,
     outline: false,
   });
-  const [generatedStatement, setGeneratedStatement] = useState('');
   const [copied, setCopied] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -50,6 +50,7 @@ export default function TutorPage() {
         ? "Привет! 👋 Я твой ИИ-наставник. Моя цель — помочь тебе понять тему, а не просто списать готовый ответ.\n\nКакую тему хочешь разобрать сегодня?"
         : "Hello! 👋 I'm your AI tutor. I'm here to help you learn and understand — not just copy answers.\n\nWhat topic would you like to explore today?";
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMessages([
       {
         id: 1,
@@ -64,9 +65,9 @@ export default function TutorPage() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Handle generating statement
-  useEffect(() => {
-    let parts: string[] = [];
+  // Handle generating statement during render phase
+  const generatedStatement = useMemo(() => {
+    const parts: string[] = [];
     if (disclosureOptions.concepts) parts.push(tt.useCases.concepts[lang]);
     if (disclosureOptions.practice) parts.push(tt.useCases.practice[lang]);
     if (disclosureOptions.feedback) parts.push(tt.useCases.feedback[lang]);
@@ -76,11 +77,9 @@ export default function TutorPage() {
                   lang === 'ru' ? 'Я использовал ИИ-помощника Persona Lab для следующих задач:\n' :
                   'I utilized the Persona Lab AI assistant for the following tasks:\n';
     
-    const statement = parts.length > 0
+    return parts.length > 0
       ? `${intro}${parts.map(p => `- ${p}`).join('\n')}\n\n${tr.trust.academicHonesty[lang]}`
       : '';
-
-    setGeneratedStatement(statement);
   }, [disclosureOptions, lang, tt.useCases]);
 
   const copyToClipboard = () => {
@@ -93,8 +92,11 @@ export default function TutorPage() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping) return;
 
+    // eslint-disable-next-line react-hooks/purity
+    const currentId = Date.now();
+
     const userMsg: Message = {
-      id: Date.now(),
+      id: currentId,
       role: 'user',
       text: text.trim(),
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -121,6 +123,7 @@ export default function TutorPage() {
           subject,
           language: activeLangLabel,
           difficulty,
+          tutorMode,
           guidedMode,
           explainSteps
         })
@@ -132,8 +135,11 @@ export default function TutorPage() {
 
       const data = await response.json();
       
+      // eslint-disable-next-line react-hooks/purity
+      const responseId = Date.now() + 1;
+
       const aiMsg: Message = {
-        id: Date.now() + 1,
+        id: responseId,
         role: 'ai',
         text: data.text || "Sorry, I encountered an issue.",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -141,9 +147,9 @@ export default function TutorPage() {
 
       setMessages(prev => [...prev, aiMsg]);
       addXP(15); // Reward XP for asking educational questions!
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      setErrorMsg(lang === 'kz' ? "Қосылу қатесі орын алды." : lang === 'ru' ? "Ошибка соединения с ИИ." : "Connection failed with AI service.");
+      setErrorMsg(tt.errorMsg[lang]);
     } finally {
       setIsTyping(false);
     }
@@ -161,6 +167,8 @@ export default function TutorPage() {
     English: lang === 'kz' ? 'Ағылшын тілі' : lang === 'ru' ? 'Английский' : 'English',
     Science: lang === 'kz' ? 'Жаратылыстану' : lang === 'ru' ? 'Наука' : 'Science',
     History: lang === 'kz' ? 'Тарих' : lang === 'ru' ? 'История' : 'History',
+    Geography: lang === 'kz' ? 'География' : lang === 'ru' ? 'География' : 'Geography',
+    Economics: lang === 'kz' ? 'Экономика' : lang === 'ru' ? 'Экономика' : 'Economics',
   };
 
   return (
@@ -174,9 +182,19 @@ export default function TutorPage() {
             <div className={styles.sidebarSection}>
               <h3 className={styles.sidebarTitle}>📚 {tr.practice.subject[lang]}</h3>
               <div className={styles.optionGroup}>
-                {['Math', 'English', 'Science', 'History'].map(s => (
+                {['Math', 'English', 'Science', 'History', 'Geography', 'Economics'].map(s => (
                   <button key={s} className={`${styles.optionBtn} ${subject === s ? styles.optionActive : ''}`}
                     onClick={() => setSubject(s)}>{sidebarSubjectLabels[s]}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.sidebarSection}>
+              <h3 className={styles.sidebarTitle}>⚙️ {tt.modeTitle[lang]}</h3>
+              <div className={styles.optionGroup}>
+                {(['explain', 'practice', 'check', 'hint', 'steps', 'factcheck'] as const).map(m => (
+                  <button key={m} className={`${styles.optionBtn} ${tutorMode === m ? styles.optionActive : ''}`}
+                    onClick={() => setTutorMode(m)}>{tt.modes[m][lang]}</button>
                 ))}
               </div>
             </div>
@@ -251,6 +269,14 @@ export default function TutorPage() {
               </div>
             </div>
 
+            {/* Trust message banner */}
+            <div className={styles.trustBanner}>
+              <div className={styles.trustIcon}>🛡️</div>
+              <div>
+                <p>{tt.trustMessage[lang]}</p>
+              </div>
+            </div>
+
             <div className={styles.chatHeader}>
               <div className={styles.chatHeaderInfo}>
                 <div className={styles.tutorAvatar}>🤖</div>
@@ -303,6 +329,30 @@ export default function TutorPage() {
                 </div>
               )}
               <div ref={chatEndRef} />
+            </div>
+
+            <div className={styles.guidedToolsContainer}>
+              <button 
+                className={styles.guidedToolBtn} 
+                onClick={() => sendMessage(lang === 'kz' ? 'Өзім байқап көрейін: Маған толық жауаптың орнына бастапқы кішігірім сұрақ немесе кеңес бере аласыз ба?' : lang === 'ru' ? 'Хочу попробовать сам: Дай мне вводный вопрос или подсказку вместо готового решения.' : 'I want to try first: Give me a starter question or hint instead of the final solution.')}
+                disabled={isTyping}
+              >
+                💡 {tt.guidedTools.tryFirst[lang]}
+              </button>
+              <button 
+                className={styles.guidedToolBtn} 
+                onClick={() => sendMessage(lang === 'kz' ? 'Жауаптың алдында нұсқау: Маған тікелей жауап бермей, алдымен кішігірім нұсқау бере аласыз ба?' : lang === 'ru' ? 'Дай подсказку перед ответом: Пожалуйста, дай мне подсказку вместо прямого ответа.' : 'Hint before answer: Please give me a hint instead of the direct answer.')}
+                disabled={isTyping}
+              >
+                🔑 {tt.guidedTools.hintFirst[lang]}
+              </button>
+              <button 
+                className={styles.guidedToolBtn} 
+                onClick={() => sendMessage(lang === 'kz' ? 'Рефлексиялық сұрақ: Түсінігімді тексеру үшін маған өткен тақырып бойынша рефлексиялық сұрақ қойыңыз.' : lang === 'ru' ? 'Вопрос на размышление: Задай мне рефлексивный вопрос по пройденному, чтобы проверить понимание.' : 'Reflection question: Ask me a reflection question about what we discussed to check my understanding.')}
+                disabled={isTyping}
+              >
+                🧠 {tt.guidedTools.reflection[lang]}
+              </button>
             </div>
 
             <div className={styles.chatInput}>

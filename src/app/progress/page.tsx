@@ -15,6 +15,7 @@ export default function ProgressPage() {
   const [stats, setStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStats(getLocalStats());
   }, []);
 

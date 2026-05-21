@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
 import tr from '@/lib/translations';
 import { generatePractice, checkAnswer as aiCheckAnswer, type PracticeQuestion, type AnswerFeedback } from '@/lib/ai-service';
-import { getLocalStats, addQuizResult, addXP } from '@/lib/user-store';
+import { addQuizResult, addXP } from '@/lib/user-store';
 import styles from './practice.module.css';
 
 export default function PracticePage() {

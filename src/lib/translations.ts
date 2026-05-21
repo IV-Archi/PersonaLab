@@ -168,6 +168,15 @@ const t = {
     quickActions: { en: 'Quick Actions', ru: 'Быстрые действия', kz: 'Жылдам әрекеттер' },
     guidedMode: { en: 'Guided Study Mode (No copy-paste)', ru: 'Режим наставника (Без копирования)', kz: 'Тьютор режимі (Көшірусіз)' },
     showSteps: { en: 'Explain steps details', ru: 'Объяснить шаги подробно', kz: 'Қадамдарды егжей-тегжейлі түсіндіру' },
+    modeTitle: { en: 'Tutor Mode', ru: 'Режим репетитора', kz: 'Тьютор режимі' },
+    modes: {
+      explain: { en: 'Explain simply', ru: 'Объясни просто', kz: 'Қарапайым түсіндір' },
+      practice: { en: 'Give practice', ru: 'Дай практику', kz: 'Жаттығу бер' },
+      check: { en: 'Check my answer', ru: 'Проверь мой ответ', kz: 'Жауапты тексер' },
+      hint: { en: 'Give a hint', ru: 'Дай подсказку', kz: 'Нұсқау бер' },
+      steps: { en: 'Step-by-step solution', ru: 'Пошаговое решение', kz: 'Қадамдық шешім' },
+      factcheck: { en: 'Fact-check mode', ru: 'Режим проверки фактов', kz: 'Фактілерді тексеру' },
+    },
     disclosureBtn: { en: 'Generate AI-Use Disclosure', ru: 'Создать отчет об ИИ', kz: 'ЖИ-ді пайдалану есебін жасау' },
     disclosureTitle: { en: 'AI Use Disclosure Statement', ru: 'Отчет об использовании ИИ', kz: 'ЖИ-ді пайдалану туралы мәлімдеме' },
     disclosureDesc: {
@@ -189,6 +198,21 @@ const t = {
       en: 'Labby is an helper. I will guide you with hints and examples but will not write assignments for you.',
       ru: 'Labby — ваш помощник. Я помогу подсказками и примерами, но не буду писать работу за вас.',
       kz: 'Labby — сіздің көмекшіңіз. Мен нұсқаулар мен мысалдар арқылы көмектесемін, бірақ жұмысты сіз үшін жазбаймын.',
+    },
+    errorMsg: {
+      en: 'AI Tutor is temporarily unavailable. Please try again.',
+      ru: 'ИИ Репетитор временно недоступен. Пожалуйста, попробуйте позже.',
+      kz: 'ЖИ Тьютор уақытша қолжетімсіз. Кейінірек қайталап көріңіз.',
+    },
+    trustMessage: {
+      en: 'Persona Lab helps you learn, not copy. Use AI for guidance, practice, and feedback.',
+      ru: 'Persona Lab помогает вам учиться, а не списывать. Используйте ИИ для руководства, практики и обратной связи.',
+      kz: 'Persona Lab сізге көшіруге емес, оқуға көмектеседі. Бағыттау, жаттығу және кері байланыс үшін ЖИ-ді пайдаланыңыз.',
+    },
+    guidedTools: {
+      tryFirst: { en: 'Try First', ru: 'Попробовать самому', kz: 'Өзім байқап көрейін' },
+      hintFirst: { en: 'Hint Before Answer', ru: 'Подсказку перед ответом', kz: 'Жауаптың алдында нұсқау' },
+      reflection: { en: 'Reflection Question', ru: 'Вопрос на размышление', kz: 'Рефлексиялық сұрақ' },
     },
   },
   progress: {

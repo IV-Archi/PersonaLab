@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
 import tr from '@/lib/translations';
@@ -104,7 +103,7 @@ export default function CoursePathPage() {
                   <strong>{c.whyUseful[lang]}</strong> {subject.whyUseful[lang]}
                 </p>
 
-                {subject.hasWeakTopics && (
+                {subject.hasWeakTopics && subject.weakTopics && (
                   <div className={styles.weakWarning}>
                     ⚠️ {c.weakTopicWarning[lang]}: {subject.weakTopics[lang]}
                   </div>
