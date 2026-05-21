@@ -117,10 +117,14 @@
 * **Visual Layout:** High-contrast graphic showing the hybrid B2B/B2G revenue streams and operating costs.
 * **Slide Text:**
   ## Business & Sustainability Model
-  * **B2C (Freemium):** Free core features (AI Tutor, daily practice). Premium ($4.99/mo) for advanced deep-dives, unlimited custom paths, and deep analytics.
-  * **B2B (School SaaS):** Licensing fee ($1.50 per student/year) for school dashboards, auto-assignment tools, and class analytics.
-  * **B2G (Rural Educational Equity):** Government/State licensing grants to deploy Persona Lab in rural school districts lacking subject-matter teachers.
-  * **Cost Structure:** Server costs optimized via lightweight AI models (`gpt-4o-mini`).
+
+  | Revenue Stream | Target Market | Pricing Structure | Core Value Provided |
+  | :--- | :--- | :--- | :--- |
+  | **B2C Freemium** | Individual Students & Parents | **Free** (Core) / **$4.99/mo** (Premium) | Advanced deep-dives, unlimited custom paths, and deep analytics. |
+  | **B2B School SaaS** | Private & Public School Districts | **$1.50** per student / year | School dashboards, auto-assignment tools, class analytics. |
+  | **B2G Licensing** | Ministry of Education / State | **Grant-based** contracts | Deployment in rural schools lacking subject-matter teachers. |
+
+  * **Cost Structure:** Server costs aggressively optimized via lightweight AI models (`gpt-4o-mini`).
 * **Speaker Script (5:00 - 5:45):**
   > "How is this sustainable? We utilize a hybrid business model. While the basic app is free for all students to ensure accessibility, we charge a B2B SaaS license of $1.50 per student/year to private and public schools for our advanced analytics dashboard. Furthermore, we target B2G grants to deploy the system in rural schools where there is a critical shortage of qualified subject-matter teachers."
 * **Rubric Factor Alignment:** Factor 7 (Business / operations / sustainability model benefiting all).
