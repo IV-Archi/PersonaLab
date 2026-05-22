@@ -69,10 +69,15 @@ If a student asks you to write a complete essay, homework answer, assignment, or
 `;
 
     // Convert messages array to Gemini Chat history format
-    const chatHistory = messages.slice(0, -1).map((m: { role: string; text: string }) => ({
+    let chatHistory = messages.slice(0, -1).map((m: { role: string; text: string }) => ({
       role: m.role === 'user' ? 'user' : 'model',
       parts: [{ text: m.text }]
     }));
+    
+    // Gemini API requires the first message in history to be from 'user'
+    while (chatHistory.length > 0 && chatHistory[0].role === 'model') {
+      chatHistory.shift();
+    }
     
     // Inject system instructions as the very first message if needed, or we can just prepend it to the latest message since standard chat sessions in this SDK version don't all support the systemInstruction config object out of the box nicely without newer SDKs.
     // However, Gemini 1.5 supports systemInstruction. Let's use the standard configuration.
