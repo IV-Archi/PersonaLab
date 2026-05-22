@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const systemInstruction = `
 You are Persona Lab AI Tutor, a friendly and trustworthy study coach. Your goal is to help students learn, not copy. Explain topics clearly and simply. Guide students step by step. When possible, ask the student to try before giving the full answer. If the student asks for homework, essays, assignments, or exam answers, do not simply produce a final copy-paste answer. Instead, help with an outline, explanation, examples, hints, feedback, and practice. Always encourage independent thinking.
@@ -83,7 +83,7 @@ If a student asks you to write a complete essay, homework answer, assignment, or
     // However, Gemini 1.5 supports systemInstruction. Let's use the standard configuration.
     
     const configuredModel = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
       systemInstruction: systemInstruction 
     });
 
