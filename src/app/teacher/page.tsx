@@ -3,14 +3,40 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
+import { useUser } from '@/components/UserContext';
 import tr from '@/lib/translations';
 import { mockTeacherData } from '@/lib/ai-service';
 import styles from './teacher.module.css';
 
 export default function TeacherPage() {
   const { lang } = useApp();
+  const { user } = useUser();
   const t = tr.teacher;
   const d = mockTeacherData;
+
+  if (!user || user.role !== 'teacher') {
+    return (
+      <>
+        <Navbar />
+        <main className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', padding: 'var(--space-6)' }}>
+          <div className="card" style={{ maxWidth: '520px', width: '100%', textAlign: 'center', padding: 'var(--space-8)', border: '1px solid var(--border-primary)', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)' }}>
+            <div style={{ fontSize: '64px', marginBottom: 'var(--space-4)' }}>🔒</div>
+            <h2 className="section-title" style={{ fontSize: 'var(--text-2xl)', marginBottom: 'var(--space-3)' }}>
+              {lang === 'ru' ? 'Доступ ограничен' : lang === 'kz' ? 'Рұқсат шектелген' : 'Access Restricted'}
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', lineHeight: 'var(--leading-normal)', marginBottom: 'var(--space-6)' }}>
+              {lang === 'ru' ? 'Этот раздел доступен только для пользователей с ролью Учитель. Пожалуйста, зарегистрируйтесь или войдите под аккаунтом учителя, чтобы управлять классами и учебным процессом.' :
+               lang === 'kz' ? 'Бұл бөлім тек Мұғалім рөлі бар пайдаланушыларға қолжетімді. Сыныптарды және оқу процесін басқару үшін мұғалім аккаунтымен тіркеліңіз немесе жүйеге кіріңіз.' :
+               'This section is exclusive to users registered with the Teacher role. Please register or sign in using a teacher account to access classroom dashboards and student analytics.'}
+            </p>
+            <a href="/" className="btn btn-primary" style={{ display: 'inline-block', width: '100%' }}>
+              {lang === 'ru' ? 'На главную' : lang === 'kz' ? 'Басты бетке' : 'Back to Home'}
+            </a>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   // AI Task Generator State
   const [genSubject, setGenSubject] = useState('Math');

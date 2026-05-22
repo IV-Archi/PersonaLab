@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ThemeProvider from "@/components/ThemeProvider";
+import { UserProvider } from "@/components/UserContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <UserProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </UserProvider>
       </body>
     </html>
   );

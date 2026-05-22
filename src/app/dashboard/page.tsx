@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
+import { useUser } from '@/components/UserContext';
 import tr from '@/lib/translations';
 import { getLocalStats, completeTodayTask, type UserStats } from '@/lib/user-store';
 import Link from 'next/link';
@@ -10,19 +11,56 @@ import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
   const { lang } = useApp();
+  const { user, updateStats } = useUser();
   const dt = tr.dashboard;
 
   const [stats, setStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStats(getLocalStats());
-  }, []);
+    if (user) {
+      const userStats: UserStats = {
+        name: user.name,
+        xp: user.xp,
+        streak: user.streak,
+        level: user.level,
+        completedLessons: user.completedLessons,
+        totalLessons: user.totalLessons,
+        weeklyGoal: user.weeklyGoal,
+        weeklyCompleted: user.weeklyCompleted,
+        subjectProgress: user.subjectProgress,
+        badges: user.badges,
+        recentQuizzes: user.recentQuizzes,
+        todayPlan: [
+          { id: 1, title: 'Solve 5 Quadratic Equations', subject: 'Math', duration: '15 mins', done: false },
+          { id: 2, title: 'Read Photosynthesis outline', subject: 'Science', duration: '10 mins', done: true },
+          { id: 3, title: 'Review Essay outlines with AI', subject: 'English', duration: '20 mins', done: false },
+        ],
+        weeklyProgress: [40, 60, 50, 70, 0, 0, 0],
+        weakTopics: [],
+        strongTopics: []
+      };
+      setStats(userStats);
+    } else {
+      setStats(getLocalStats());
+    }
+  }, [user]);
 
   const handleToggleTask = (id: number) => {
     if (!stats) return;
-    const updated = completeTodayTask(id);
-    setStats({ ...updated });
+    if (user) {
+      updateStats(prev => {
+        const next = { ...prev };
+        next.todayPlan = next.todayPlan.map(t => t.id === id ? { ...t, done: !t.done } : t);
+        const completedTask = next.todayPlan.find(t => t.id === id);
+        if (completedTask && completedTask.done) {
+          next.xp += 10;
+        }
+        return next;
+      });
+    } else {
+      const updated = completeTodayTask(id);
+      setStats({ ...updated });
+    }
   };
 
   if (!stats) {

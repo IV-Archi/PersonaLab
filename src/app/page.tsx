@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
 import tr from '@/lib/translations';
@@ -8,6 +9,7 @@ import styles from './page.module.css';
 
 export default function HomePage() {
   const { lang } = useApp();
+  const [billingPeriod, setBillingPeriod] = useState<'month' | '6month' | 'year'>('year');
   const h = tr.hero;
   const s = tr.solution;
 
@@ -123,7 +125,7 @@ export default function HomePage() {
                 },
                 { 
                   r: tr.roles.parent, 
-                  link: '/parent', 
+                  link: '/progress?role=parent', 
                   cta: tr.nav.parent[lang], 
                   features: lang === 'kz' ? 
                     ['Апталық прогресс', 'Пәндерге шолу', 'Әрекеттерді бақылау', 'Ұсыныстар', 'Оқу сериялары'] :
@@ -142,6 +144,138 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Pricing Plans Section */}
+        {(() => {
+          const pt = {
+            label: { en: 'PRICING PLANS', ru: 'ТАРИФНЫЕ ПЛАНЫ', kz: 'ТАРИФТІК ЖОСПАРЛАР' },
+            title: { en: 'Choose Your Learning Path', ru: 'Выберите ваш путь обучения', kz: 'Оқу жолыңызды таңдаңыз' },
+            desc: {
+              en: 'Start learning for free or unlock unlimited access, personalized roadmaps, and advanced AI features.',
+              ru: 'Начните учиться бесплатно или откройте безлимитный доступ, персональные дорожные карты и продвинутый ИИ.',
+              kz: 'Тегін оқуды бастаңыз немесе шектеусіз мүмкіндіктерді, жеке оқу карталарын және озық ЖИ функцияларын ашыңыз.'
+            },
+            freeTitle: { en: 'Free Learner', ru: 'Бесплатный тариф', kz: 'Тегін тариф' },
+            freeDesc: {
+              en: 'Core learning access with standard tools',
+              ru: 'Базовый доступ к обучению со стандартными инструментами',
+              kz: 'Стандартты құралдармен негізгі оқу мүмкіндіктері'
+            },
+            premiumTitle: { en: 'Premium Pro', ru: 'Премиум Про', kz: 'Премиум Про' },
+            premiumDesc: {
+              en: 'Unlock unlimited learning potential with premium AI tools',
+              ru: 'Раскройте безлимитный потенциал обучения с премиальным ИИ',
+              kz: 'Премиум ЖИ құралдарымен шектеусіз білім әлеуетін ашыңыз'
+            },
+            monthly: { en: 'Monthly', ru: 'Помесячно', kz: 'Айына' },
+            semiAnnual: { en: '6-Month Plan', ru: 'Тариф 6 месяцев', kz: '6 айлық тариф' },
+            annual: { en: 'Yearly Plan', ru: 'Годовой тариф', kz: 'Жылдық тариф' },
+            save: { en: 'Save', ru: 'Скидка', kz: 'Үнемдеу' },
+            ctaFree: { en: 'Get Started Free', ru: 'Начать бесплатно', kz: 'Тегін бастау' },
+            ctaPremium: { en: 'Upgrade to Pro', ru: 'Перейти на Про', kz: 'Про деңгейіне өту' },
+            popular: { en: 'MOST POPULAR', ru: 'ПОПУЛЯРНО', kz: 'ЕҢ ТАНЫМАЛ' }
+          };
+
+          return (
+            <section className={`section ${styles.plansSection}`}>
+              <div className="container">
+                <div className={styles.center}>
+                  <div className="section-label">{pt.label[lang]}</div>
+                  <h2 className="section-title">{pt.title[lang]}</h2>
+                  <p className="section-desc" style={{ margin: '0 auto', marginTop: 'var(--space-3)' }}>{pt.desc[lang]}</p>
+                  
+                  <div style={{ marginTop: 'var(--space-6)' }}>
+                    <div className={styles.pricingToggle}>
+                      <button 
+                        type="button"
+                        className={`${styles.pricingToggleBtn} ${billingPeriod === 'month' ? styles.pricingToggleBtnActive : ''}`}
+                        onClick={() => setBillingPeriod('month')}
+                      >
+                        {pt.monthly[lang]} ($9.99/mo)
+                      </button>
+                      <button 
+                        type="button"
+                        className={`${styles.pricingToggleBtn} ${billingPeriod === '6month' ? styles.pricingToggleBtnActive : ''}`}
+                        onClick={() => setBillingPeriod('6month')}
+                      >
+                        {pt.semiAnnual[lang]} ($49.99) <span style={{ opacity: 0.85, fontSize: '10px' }}>— {pt.save[lang]} 16%</span>
+                      </button>
+                      <button 
+                        type="button"
+                        className={`${styles.pricingToggleBtn} ${billingPeriod === 'year' ? styles.pricingToggleBtnActive : ''}`}
+                        onClick={() => setBillingPeriod('year')}
+                      >
+                        {pt.annual[lang]} ($79.99) <span style={{ opacity: 0.85, fontSize: '10px' }}>— {pt.save[lang]} 33%</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.pricingGrid}>
+                  <div className={styles.pricingCard}>
+                    <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: '800' }}>{pt.freeTitle[lang]}</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>{pt.freeDesc[lang]}</p>
+                    
+                    <div className={styles.priceBlock}>
+                      <span className={styles.priceVal}>$0</span>
+                      <span className={styles.priceSub}>/ {lang === 'ru' ? 'всегда' : lang === 'kz' ? 'мәңгі' : 'forever'}</span>
+                    </div>
+                    <div className={styles.priceBillingDetail} style={{ opacity: 0 }}>placeholder</div>
+
+                    <div style={{ borderTop: '1px solid var(--border-primary)', margin: 'var(--space-2) 0' }} />
+                    
+                    <ul className={styles.featuresList}>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? '15 стандартных запросов к ИИ в день' : lang === 'kz' ? 'Күніне 15 стандартты ЖИ сұранысы' : '15 standard AI Tutor queries / day'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? 'Базовый трек программирования' : lang === 'kz' ? 'Базалық бағдарламалау бағыты' : 'Access to basic Programming track'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? 'Стандартная статистика успеваемости' : lang === 'kz' ? 'Стандартты үлгерім статистикасы' : 'Standard performance statistics'}</li>
+                      <li className={styles.featureItemDisabled}>✗ {lang === 'ru' ? 'Нет родительского дашборда' : lang === 'kz' ? 'Ата-аналар дашборды жоқ' : 'No parent dashboard metrics'}</li>
+                      <li className={styles.featureItemDisabled}>✗ {lang === 'ru' ? 'Генерация тестов по файлам' : lang === 'kz' ? 'Файлдар бойынша тесттер құру' : 'Custom PDF assignment scanning'}</li>
+                      <li className={styles.featureItemDisabled}>✗ {lang === 'ru' ? 'Безлимитный супербыстрый ИИ' : lang === 'kz' ? 'Шектеусіз аса жылдам ЖИ' : 'Unlimited ultra-fast AI response'}</li>
+                    </ul>
+
+                    <Link href="/dashboard" className="btn btn-secondary" style={{ width: '100%', marginTop: 'auto' }}>
+                      {pt.ctaFree[lang]}
+                    </Link>
+                  </div>
+
+                  <div className={`${styles.pricingCard} ${styles.pricingCardPopular}`}>
+                    <div className={styles.badgePopular}>{pt.popular[lang]}</div>
+                    <h3 style={{ fontSize: 'var(--text-xl)', fontWeight: '800' }}>{pt.premiumTitle[lang]}</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', marginTop: 'var(--space-2)' }}>{pt.premiumDesc[lang]}</p>
+                    
+                    <div className={styles.priceBlock}>
+                      <span className={styles.priceVal}>
+                        {billingPeriod === 'month' ? '$9.99' : billingPeriod === '6month' ? '$8.33' : '$6.66'}
+                      </span>
+                      <span className={styles.priceSub}>/ {lang === 'ru' ? 'мес' : lang === 'kz' ? 'ай' : 'month'}</span>
+                    </div>
+                    
+                    <div className={styles.priceBillingDetail}>
+                      {billingPeriod === 'month' ? 'Billed monthly' :
+                       billingPeriod === '6month' ? 'Billed $49.99 every 6 months (Save 16%)' :
+                       'Billed $79.99 every 12 months (Save 33%)'}
+                    </div>
+
+                    <div style={{ borderTop: '1px solid var(--border-primary)', margin: 'var(--space-2) 0' }} />
+                    
+                    <ul className={styles.featuresList}>
+                      <li className={styles.featureItem} style={{ fontWeight: '600', color: 'var(--text-primary)' }}>★ {lang === 'ru' ? 'Безлимитные сверхбыстрые ответы ИИ' : lang === 'kz' ? 'Шектеусіз өте жылдам ЖИ жауаптары' : 'Unlimited ultra-fast AI Tutor responses'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? 'Доступ ко всем 6 учебным трекам' : lang === 'kz' ? 'Барлық 6 оқу бағытына кіру' : 'Full access to all 6 academic tracks'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? 'Адаптивный генератор тестов и сканер PDF' : lang === 'kz' ? 'Бейімделгіш тест генераторы және PDF сканер' : 'Adaptive quiz generator & PDF assignments'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? 'Кабинет родителя + еженедельные отчеты' : lang === 'kz' ? 'Ата-ана кабинеті + апталық есептер' : 'Parent dashboard with auto weekly reports'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? '100 кредитов глубокого ИИ-оценивания' : lang === 'kz' ? '100 терең ЖИ-бағалау кредиттері' : '100 Monthly Deep AI grading credits'}</li>
+                      <li className={styles.featureItem}>✓ {lang === 'ru' ? 'Персональные дорожные оқу-карты' : lang === 'kz' ? 'Жеке бейімделген оқу жоспарлары' : 'Personalized learning roadmaps'}</li>
+                    </ul>
+
+                    <Link href="/dashboard" className="btn btn-primary" style={{ width: '100%', marginTop: 'auto' }}>
+                      {pt.ctaPremium[lang]}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         <section className={`section ${styles.sdgSection}`}>
           <div className="container">
@@ -177,7 +311,7 @@ export default function HomePage() {
                   <span className={styles.footerColTitle}>{tr.footer.users[lang]}</span>
                   <Link href="/dashboard">{tr.roles.student.title[lang]}</Link>
                   <Link href="/teacher">{tr.roles.teacher.title[lang]}</Link>
-                  <Link href="/parent">{tr.roles.parent.title[lang]}</Link>
+                  <Link href="/progress?role=parent">{tr.roles.parent.title[lang]}</Link>
                 </div>
               </div>
             </div>
