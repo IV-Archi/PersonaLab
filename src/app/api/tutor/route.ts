@@ -1,20 +1,21 @@
 import { NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { messages, subject, language, difficulty, tutorMode, guidedMode, explainSteps } = body;
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!apiKey || apiKey.trim() === '' || apiKey === 'your_openai_api_key_here') {
+    if (!apiKey || apiKey.trim() === '' || apiKey === 'your_gemini_api_key_here') {
       console.error(
         "\n========================================================================\n" +
-        "❌ DEVELOPER ERROR: OPENAI_API_KEY is missing or invalid in your .env!\n" +
+        "❌ DEVELOPER ERROR: GEMINI_API_KEY is missing or invalid in your .env!\n" +
         "Please follow these steps to configure it:\n" +
         "1. In the 'persona-lab-app' directory, create a '.env' file if it doesn't exist.\n" +
-        "2. Add your OpenAI API key to the file:\n" +
-        "   OPENAI_API_KEY=sk-proj-...\n" +
+        "2. Add your Gemini API key to the file:\n" +
+        "   GEMINI_API_KEY=AIzaSy...\n" +
         "3. Restart the Next.js development server.\n" +
         "========================================================================\n"
       );
@@ -23,6 +24,9 @@ export async function POST(req: Request) {
         { status: 503 }
       );
     }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const systemInstruction = `
 You are Persona Lab AI Tutor, a friendly and trustworthy study coach. Your goal is to help students learn, not copy. Explain topics clearly and simply. Guide students step by step. When possible, ask the student to try before giving the full answer. If the student asks for homework, essays, assignments, or exam answers, do not simply produce a final copy-paste answer. Instead, help with an outline, explanation, examples, hints, feedback, and practice. Always encourage independent thinking.
@@ -49,6 +53,7 @@ Rules:
 - If you reference something you are not 100% sure about or that requires external verification, add the suffix "[Verify]" directly after the statement/fact.
 - Encourage the student to think and try.
 - Keep answers helpful but not too long unless the student asks for details.
+- Always format your math formulas beautifully using Markdown syntax.
 
 Learning flow:
 1. Understand the question.
@@ -59,42 +64,33 @@ Learning flow:
 6. Recommend what to study next.
 
 Academic honesty rule:
-If a student asks you to write a complete essay, homework answer, assignment, or exam response for submission, respond like this (translated to the requested language: ${language}):
+If a student asks you to write a complete essay, homework answer, assignment, or exam response for submission, respond exactly like this (translated to the requested language: ${language}):
 "I can help you understand the topic, create an outline, give examples, and review your draft, but you should write the final answer yourself."
 `;
 
-    const promptMessages = [
-      { role: 'system', content: systemInstruction },
-      ...messages.map((m: { role: string; text: string }) => ({
-        role: m.role === 'user' ? 'user' : 'assistant',
-        content: m.text
-      }))
-    ];
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: promptMessages,
-        temperature: 0.7
-      })
+    // Convert messages array to Gemini Chat history format
+    const chatHistory = messages.slice(0, -1).map((m: { role: string; text: string }) => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.text }]
+    }));
+    
+    // Inject system instructions as the very first message if needed, or we can just prepend it to the latest message since standard chat sessions in this SDK version don't all support the systemInstruction config object out of the box nicely without newer SDKs.
+    // However, Gemini 1.5 supports systemInstruction. Let's use the standard configuration.
+    
+    const configuredModel = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: systemInstruction 
     });
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("OpenAI API call failed:", errText);
-      return NextResponse.json(
-        { error: "AI Tutor is temporarily unavailable. Please try again." },
-        { status: 502 }
-      );
-    }
+    const chat = configuredModel.startChat({
+      history: chatHistory,
+    });
 
-    const data = await response.json();
-    const replyText = data.choices?.[0]?.message?.content || "I was unable to formulate a response. Please try again.";
+    // The very last message is the current prompt
+    const latestMessage = messages[messages.length - 1].text;
+
+    const result = await chat.sendMessage(latestMessage);
+    const replyText = result.response.text();
 
     return NextResponse.json({ text: replyText });
   } catch (error: unknown) {

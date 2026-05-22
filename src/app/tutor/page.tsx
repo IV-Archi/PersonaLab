@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import { useApp } from '@/components/ThemeProvider';
 import tr, { type Lang } from '@/lib/translations';
 import { addXP } from '@/lib/user-store';
+import ReactMarkdown from 'react-markdown';
 import styles from './tutor.module.css';
 
 interface Message {
@@ -295,18 +296,11 @@ export default function TutorPage() {
                   {msg.role === 'ai' && <div className={styles.msgAvatar}>🤖</div>}
                   <div className={styles.msgBubble}>
                     {/* Render verification warnings if [Verify] is found */}
-                    <p className={styles.msgText}>
-                      {msg.text.split('[Verify]').map((chunk, idx) => (
-                        <span key={idx}>
-                          {chunk}
-                          {idx < msg.text.split('[Verify]').length - 1 && (
-                            <span className={styles.verifyTag}>
-                              ⚠️ {tr.trust.verifyLabel[lang]}
-                            </span>
-                          )}
-                        </span>
-                      ))}
-                    </p>
+                    <div className={styles.msgText}>
+                      <ReactMarkdown>
+                        {msg.text.replace(/\[Verify\]/g, ' ⚠️ **[Needs Verification]** ')}
+                      </ReactMarkdown>
+                    </div>
                     <span className={styles.msgTime}>{msg.time}</span>
                   </div>
                 </div>
